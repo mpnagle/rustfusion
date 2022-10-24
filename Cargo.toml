@@ -1,0 +1,8 @@
+[workspace]
+
+[package]
+name = "rustfusion" # the name of the package
+version = "0.1.0" 
+
+[dependcies]
+ferris-says = "0.2" 
