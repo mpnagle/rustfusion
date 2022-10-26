@@ -1,8 +1,21 @@
 extern crate ndarray;
 extern crate mnist;
+extern crate image;
 
+use image::RgbImage;
 use mnist::*;
 use ndarray::prelude::*;
+
+
+fn array_to_image(arr: Array3<u8>) -> RgbImage {
+    assert!(arr.is_standard_layout());
+
+    let (height, width, _) = arr.dim();
+    let raw = arr.into_raw_vec();
+
+    RgbImage::from_raw(width as u32, height as u32, raw)
+        .expect("container should have the right size for the image dimensions")
+}
 
 fn main() {
 
@@ -40,4 +53,20 @@ fn main() {
     let _test_labels: Array2<f32> = Array2::from_shape_vec((10_000, 1), tst_lbl)
         .expect("Error converting testing labels to Array2 struct")
         .map(|x| *x as f32);
+
+
+        
+    let mut array: Array3<u8> = Array3::zeros((200, 250, 3)); // 250x200 RGB
+    
+    for ((x, y, z), v) in array.indexed_iter_mut() {
+        *v = match z {
+            0 => y as u8,
+            1 => x as u8,
+            2 => 0,
+            _ => unreachable!(),
+        };
+    }
+
+    let image = array_to_image(array);
+    image.save("out.png");
 }
